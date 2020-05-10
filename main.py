@@ -1,33 +1,21 @@
 import reddit
-import subtitles
-import gif
-import sys
-
-
-def godfather():
-    source = 'D:/Videos/Media/The.Godfather.Part.I.The.Coppola.Restoration.1972.BluRay.1080p.TrueHD.5.1.AVC.REMUX-FraMeSToR\The.Godfather.Part.I.The.Coppola.Restoration.1972.BluRay.1080p.TrueHD.5.1.AVC.REMUX-FraMeSToR.mkv'
-    subtitle_list = subtitles.parse_subtitles(
-        source,
-        "D:\Videos\Media\The.Godfather.Part.I.The.Coppola.Restoration.1972.BluRay.1080p.TrueHD.5.1.AVC.REMUX-FraMeSToR\The.Godfather.Part.I.1972.720p.BluRay.x264-ADHD.Subs.EN-HI.srt",
-        "even think to call me godfather")
-    gif.extract_gif(source, subtitle_list)
-
-
-def community():
-    source = 'test/Community.S01E01.1080p.BluRay.x264-YELLOWBiRD.mkv'
-    # reddit.get_quote_candidates('dzsk34')
-    # subtitles.download_subtitles('1467481')
-    subtitle_list = subtitles.parse_subtitles(
-        source,
-        'test/1952727133.srt',
-        "wish"
-    )
-    gif.extract_gif(source, subtitle_list)
+from subtitles import Subtitles
+from gif import GifExtractor
 
 
 def main():
-    # godfather()
-    community()
+    source = 'test/Community.S01E01.1080p.BluRay.x264-YELLOWBiRD.mkv'
+    subs = 'test/1952727133.srt'
+    tmp_dir = 'test/data/'
+    # reddit.get_quote_candidates('dzsk34')
+    # subtitles.download_subtitles('1467481')
+
+    subtitles = Subtitles(tmp_dir)
+    synced_subs = subtitles.sync_subtitles(source, subs)
+    extracted_subs = subtitles.search_subtitles(synced_subs, "nicest")
+
+    gif_extractor = GifExtractor(tmp_dir)
+    gif_extractor.extract_gif(source, extracted_subs)
 
 
 main()
