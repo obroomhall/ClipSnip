@@ -5,7 +5,10 @@ AutoGIF is a command line tool that can take just 2 arguments; a path to a video
 ```
 quote="nicest" vid="Community.S01E01.1080p.BluRay.x264.mkv"
 ```
-![Community](https://media.giphy.com/media/TFaDvUr4O9pR9jKz4q/giphy.gif)
+
+output-1 | output-2
+:---:|:---:
+![Community](https://media.giphy.com/media/TFaDvUr4O9pR9jKz4q/giphy.gif) | ![Community2](https://media.giphy.com/media/SwTwbjka5sLMpxsuAt/giphy.gif)
 
 ## Key Features
 * Subtitle sourcing and syncing
@@ -24,6 +27,5 @@ The pipeline used in AutoGIF is described below:
 5. Extract clips and hardcode subtitles
 
 ## Development
-A list of things experienced during the development of this project:
+A list of things experienced during the development of this project, this will be updated in time:
 * PyScene detect was grabbing every frame in order to skip to a known point in the video, which was taking up significant processing time, so I [submitted a fix](https://github.com/Breakthrough/PySceneDetect/pull/163) to them which skips straight to the wanted frame
-* More to come...
