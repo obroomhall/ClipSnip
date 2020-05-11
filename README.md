@@ -3,7 +3,7 @@
 AutoGIF is a command line tool that can take just 2 arguments; a path to a video file, and a quote to search for. What it aims to return is a set of short, relevant clips from that file, like this:
 
 ```
-quote="nicest" vid="Community.S01E01.1080p.BluRay.x264.mkv"
+quote="nicest" video="Community.S01E01.1080p.BluRay.x264.mkv"
 ```
 
 output-1 | output-2
@@ -16,6 +16,7 @@ output-1 | output-2
 * Simple usage
 
 ## Planned Features
+* Optionally export most popular quotes automatically
 * Subtitle customisation with fonts, sizes, colours, positions, etc.
 
 ## How it works
