@@ -28,7 +28,7 @@ The pipeline used in AutoGIF is described below:
 5. Extract clips and hardcode subtitles
 
 ## Frame perfect cuts
-Nobody wants to see loose frames at the start or end of GIFs, they appear jarring and ruin the experience. To make sure never to have loose frames, I used [PySceneDetect](https://github.com/Breakthrough/PySceneDetect). Though, some jarring effect still occurs if the scene cuts too quickly after speech, or the end frame of the scene is very different from the start frame. If you have a GIF that you think contains loose frames, you can easily confirm it by using the following commands:
+Nobody wants to see loose frames at the start or end of GIFs, they appear jarring and ruin the experience. To make sure never to have loose frames, I used [PySceneDetect](https://github.com/Breakthrough/PySceneDetect). Though, some jarring effect still occurs if the scene cuts too quickly after speech, or the end frame of the scene is very different from the start frame. If you have a GIF that you think contains loose frames, you can easily confirm it by using the following commands that export the first and last frames for comparison:
 ```
 ffmpeg -i input.mp4 -vf "select=eq(n\,0)" -q:v 3 first.jpg
 ffmpeg -sseof -3 -i input.mp4 -update 1 -q:v 1 last.jpg
