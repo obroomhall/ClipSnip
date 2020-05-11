@@ -3,7 +3,7 @@
 AutoGIF is a command line tool that can take just 2 arguments; a path to a video file, and a quote to search for. What it aims to return is a set of short, relevant clips from that file, like this:
 
 ```
-quote="nicest" video="Community.S01E01.1080p.BluRay.x264.mkv"
+autogif -q "nicest" -v "Community.S01E01.1080p.BluRay.x264.mkv"
 ```
 
 output-1 | output-2
@@ -26,6 +26,13 @@ The pipeline used in AutoGIF is described below:
 3. Search subtitles with [whoosh](https://github.com/mchaput/whoosh) to find candidates for extraction
 4. Parse video file to find scene cuts nearby to the selected subtitles using [PySceneDetect](https://github.com/Breakthrough/PySceneDetect)
 5. Extract clips and hardcode subtitles
+
+## Frame perfect cuts
+Nobody wants to see loose frames at the start or end of GIFs, they appear jarring and ruin the experience. To make sure never to have loose frames, I used [PySceneDetect](https://github.com/Breakthrough/PySceneDetect). Though, some jarring effect still occurs if the scene cuts too quickly after speech, or the end frame of the scene is very different from the start frame. If you have a GIF that you think contains loose frames, you can easily confirm it by using the following commands:
+```
+ffmpeg -i input.mp4 -vf "select=eq(n\,0)" -q:v 3 first.jpg
+ffmpeg -sseof -3 -i input.mp4 -update 1 -q:v 1 last.jpg
+```
 
 ## Development
 A list of things experienced during the development of this project, this will be updated in time:
