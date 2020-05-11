@@ -25,12 +25,12 @@ class GifExtractor:
         for subtitles in subtitle_list:
 
             # gets an estimated start/end time from padding subtitles times
-            [start_time_padded, end_time_padded] = self.get_padded_trim_times(subtitles)
+            [start_time_padded, end_time_padded] = get_padded_trim_times(subtitles, self.padding_seconds)
 
             # gets frame accurate start/end times for scene cuts
             [trim_start, trim_end] = find_trim_times(source, subtitles, start_time_padded, end_time_padded)
 
-            output_filename = self.get_output_name(source, subtitles)
+            output_filename = get_output_name(source, subtitles, self.output_format)
 
             offset = datetime.timedelta(seconds=trim_start.get_seconds())
             for sub in subtitles.subs:
@@ -39,34 +39,6 @@ class GifExtractor:
 
             self.convert_srt_to_ass(subtitles)
             self.trim(source, output_filename, trim_start, trim_end)
-
-    def get_padded_trim_times(self, subtitles):
-
-        padding = datetime.timedelta(seconds=self.padding_seconds)
-        start_time_padded = subtitles.subs[0].start - padding
-        if subtitles.previous_end_time and start_time_padded < subtitles.previous_end_time:
-            start_time_padded = subtitles.previous_end_time
-
-        end_time_padded = subtitles.subs[-1].end + padding
-        if subtitles.next_start_time and end_time_padded > subtitles.next_start_time:
-            end_time_padded = subtitles.next_start_time
-
-        return [start_time_padded, end_time_padded]
-
-    def get_output_name(self, source, subtitles):
-
-        out_path = os.path.dirname(os.path.abspath(source))
-
-        no_new_lines = subtitles.subs[0].content.strip('\n').lower()
-        with_dashes = re.sub('[^0-9A-z]+', '-', no_new_lines).strip('-')
-
-        return os.path.join(
-            out_path,
-            with_dashes
-            + '-'
-            + ''.join(random.choices(string.ascii_letters + string.digits, k=6))
-            + self.output_format
-        )
 
     def convert_srt_to_ass(self, subtitles):
 
@@ -95,6 +67,20 @@ class GifExtractor:
             '-n'
         ], check=True)
         os.remove(self.tmp_ass)
+
+
+def get_padded_trim_times(subtitles, padding_seconds):
+
+    padding = datetime.timedelta(seconds=padding_seconds)
+    start_time_padded = subtitles.subs[0].start - padding
+    if subtitles.previous_end_time and start_time_padded < subtitles.previous_end_time:
+        start_time_padded = subtitles.previous_end_time
+
+    end_time_padded = subtitles.subs[-1].end + padding
+    if subtitles.next_start_time and end_time_padded > subtitles.next_start_time:
+        end_time_padded = subtitles.next_start_time
+
+    return [start_time_padded, end_time_padded]
 
 
 def find_trim_times(source, subtitles, min_start_time, max_end_time):
@@ -134,3 +120,19 @@ def find_trim_times(source, subtitles, min_start_time, max_end_time):
         video_manager.release()
 
     return [trim_start, trim_end]
+
+
+def get_output_name(source, subtitles, output_format):
+
+    out_path = os.path.dirname(os.path.abspath(source))
+
+    no_new_lines = subtitles.subs[0].content.strip('\n').lower()
+    with_dashes = re.sub('[^0-9A-z]+', '-', no_new_lines).strip('-')
+
+    return os.path.join(
+        out_path,
+        with_dashes
+        + '-'
+        + ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+        + output_format
+    )

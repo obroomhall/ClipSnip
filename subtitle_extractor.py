@@ -1,18 +1,10 @@
 import os
 import subprocess
 
-from pythonopensubtitles.opensubtitles import OpenSubtitles
 import srt
 from whoosh.index import create_in
 from whoosh.fields import *
 from whoosh.qparser import QueryParser
-
-
-ost_username = os.environ['ost_username']
-ost_password = os.environ['ost_password']
-
-ost = OpenSubtitles()
-# ost.login(ost_username, ost_password)
 
 
 class ExtractedSubtitles:
@@ -30,16 +22,6 @@ class SubtitleExtractor:
         self.schema = Schema(
             index=NUMERIC(stored=True),
             content=TEXT(stored=True))
-
-    def download_subtitles(self, imdb_id):
-
-        data = ost.search_subtitles([{
-            'sublanguageid': 'eng',
-            'imdbid': imdb_id,
-        }])
-        id_subtitle_file = data[0].get('IDSubtitleFile')
-
-        ost.download_subtitles([id_subtitle_file], output_directory=self.dir_name, extension='srt')
 
     def sync_subtitles(self, video_filename, subs_filename):
 
