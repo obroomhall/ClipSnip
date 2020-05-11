@@ -5,9 +5,11 @@ import argparse
 import sys
 import logging
 from pathlib import Path
+import os
 
 
-def main(cmd_args):
+def main():
+    cmd_args = args()
     try:
         run(cmd_args)
     except Exception as e:
@@ -41,8 +43,10 @@ def run(cmd_args):
     if cmd_args.best_match:
         extracted_subs = [max(extracted_subs, key=lambda x:x.score)]
 
-    gif_extractor = GifExtractor(tmp_dir)
+    gif_extractor = GifExtractor(tmp_dir, cmd_args.padding_seconds, cmd_args.output_format)
     gif_extractor.extract_gif(cmd_args.video, extracted_subs)
+
+    # Path(tmp_dir).rmdir()
 
 
 def args():
@@ -61,12 +65,25 @@ def args():
                         help='Override IMDb id used to find subtitles')
     parser.add_argument('-o', '--output-format', type=str, default='mp4',
                         help='Output clip format (default=mp4)')
-    parser.add_argument('-sk', '--skip-subsync', action='store_true',
+    parser.add_argument('-p', '--padding-seconds', type=float, default=1.5,
+                        help='Maximum seconds to trim before and after subtitles (default=1.5)')
+    parser.add_argument('--skip-subsync', action='store_true',
                         help='Skip syncing subtitles to audio track')
-    parser.add_argument('-sub', '--subtitle', type=str,
+    parser.add_argument('-s', '--subtitle', type=str,
                         help='Use local subtitle file instead of finding one online')
-    return parser.parse_args()
+    parser.add_argument('--ost-username', type=str, default=os.environ.get('ost_username'),
+                        help='Username for grabbing subtitles from opensubtitles.org')
+    parser.add_argument('--ost-password', type=str, default=os.environ.get('ost_password'),
+                        help='Password for grabbing subtitles from opensubtitles.org')
+    parser.add_argument('--tmdb-key', type=str, default=os.environ.get('tmdb_key'),
+                        help='The Movie Database API key for resolving file names')
+
+    cmd_args = parser.parse_args()
+    if not cmd_args.ost_username or not cmd_args.ost_password or not cmd_args.tmdb_key:
+        exit(parser.print_usage())
+
+    return cmd_args
 
 
 if __name__ == "__main__":
-    main(args())
+    main()
