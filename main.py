@@ -1,6 +1,6 @@
 import reddit
-from subtitles import Subtitles
-from gif import GifExtractor
+from subtitle_extractor import SubtitleExtractor
+from gif_extractor import GifExtractor
 
 
 def main():
@@ -10,9 +10,9 @@ def main():
     # reddit.get_quote_candidates('dzsk34')
     # subtitles.download_subtitles('1467481')
 
-    subtitles = Subtitles(tmp_dir)
-    synced_subs = subtitles.sync_subtitles(source, subs)
-    extracted_subs = subtitles.search_subtitles(synced_subs, "cool")
+    subtitle_extractor = SubtitleExtractor(tmp_dir)
+    synced_subs = subtitle_extractor.sync_subtitles(source, subs)
+    extracted_subs = subtitle_extractor.search_subtitles(synced_subs, "cool")
 
     gif_extractor = GifExtractor(tmp_dir)
     gif_extractor.extract_gif(source, extracted_subs)

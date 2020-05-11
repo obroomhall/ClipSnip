@@ -23,7 +23,7 @@ class ExtractedSubtitles:
         self.next_start_time = next_start_time
 
 
-class Subtitles:
+class SubtitleExtractor:
 
     def __init__(self, dir_name):
         self.dir_name = dir_name
