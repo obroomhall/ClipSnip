@@ -12,7 +12,7 @@ def main():
 
     subtitles = Subtitles(tmp_dir)
     synced_subs = subtitles.sync_subtitles(source, subs)
-    extracted_subs = subtitles.search_subtitles(synced_subs, "nicest")
+    extracted_subs = subtitles.search_subtitles(synced_subs, "cool")
 
     gif_extractor = GifExtractor(tmp_dir)
     gif_extractor.extract_gif(source, extracted_subs)

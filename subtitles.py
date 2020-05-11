@@ -73,18 +73,31 @@ class Subtitles:
             )
         ix_writer.commit()
 
-        extracted = []
         with ix.searcher() as searcher:
             query = QueryParser('content', ix.schema).parse(search_str)
             results = searcher.search(query)
             max_idx = len(subtitles) - 1
-            for result in results:
-                index = result['index']
-                extracted.append(ExtractedSubtitles(
-                    [subtitles[index]],
-                    None if index - 1 < 0 else subtitles[index - 1].end,
-                    None if index + 1 > max_idx else subtitles[index + 1].start,
-                ))
+            result_indices = [r['index'] for r in results]
+
+        result_indices.sort()
+
+        extracted = []
+        i = 0
+        while i < len(result_indices):
+
+            subs = []
+            while i+len(subs) < len(result_indices) and result_indices[i+len(subs)] == result_indices[i]+len(subs):
+                subs.append(subtitles[result_indices[i+len(subs)]])
+
+            lower_index = result_indices[i]
+            upper_index = result_indices[i+len(subs)-1]
+            extracted.append(ExtractedSubtitles(
+                subs,
+                None if lower_index - 1 < 0 else subtitles[lower_index - 1].end,
+                None if upper_index + 1 > max_idx else subtitles[upper_index + 1].start,
+            ))
+
+            i += len(subs)
 
         return extracted
 
