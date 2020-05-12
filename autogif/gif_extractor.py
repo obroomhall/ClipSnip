@@ -13,12 +13,12 @@ from scenedetect.frame_timecode import FrameTimecode
 
 class GifExtractor:
 
-    def __init__(self, dir_name, padding_seconds=1.5, output_format='mp4'):
+    def __init__(self, dir_name, padding_seconds=1.5):
         self.dir_name = dir_name
         self.tmp_srt = os.path.join(dir_name, 'subs.srt')
         self.tmp_ass = os.path.join(dir_name, 'subs.ass')
         self.padding_seconds = padding_seconds
-        self.output_format = output_format if output_format[0:1] == '.' else '.' + output_format
+        self.output_format = '.mp4'
 
     def extract_gif(self, source, subtitle_list):
 
@@ -47,7 +47,7 @@ class GifExtractor:
         f.close()
 
         subprocess.run(
-            'ffmpeg -i ' + self.tmp_srt + ' ' + self.tmp_ass + ' -n',
+            'ffmpeg -i ' + self.tmp_srt + ' ' + self.tmp_ass + ' -y',
             check=True
         )
         os.remove(self.tmp_srt)
