@@ -49,7 +49,7 @@ class GifExtractor:
         subprocess.run([
             'ffmpeg',
             '-i', self.tmp_srt,
-            '-o', self.tmp_ass,
+            self.tmp_ass,
             '-y'
         ], check=True)
 
