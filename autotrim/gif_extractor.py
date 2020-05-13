@@ -46,12 +46,12 @@ class GifExtractor:
         f.write(srt.compose(subtitles.subs))
         f.close()
 
-        subprocess.run(
-            'ffmpeg -i {input} {output} -y'.format(
-                input=self.tmp_srt,
-                output=self.tmp_ass),
-            check=True
-        )
+        subprocess.run([
+            'ffmpeg',
+            '-i', self.tmp_srt,
+            '-o', self.tmp_ass,
+            '-y'
+        ], check=True)
 
         os.remove(self.tmp_srt)
 
