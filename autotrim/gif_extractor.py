@@ -47,9 +47,12 @@ class GifExtractor:
         f.close()
 
         subprocess.run(
-            'ffmpeg -i ' + self.tmp_srt + ' ' + self.tmp_ass + ' -y',
+            'ffmpeg -i {input} {output} -y'.format(
+                input=self.tmp_srt,
+                output=self.tmp_ass),
             check=True
         )
+
         os.remove(self.tmp_srt)
 
     def trim(self, source, output, start, end):
@@ -61,11 +64,12 @@ class GifExtractor:
             '-vf', 'ass=' + self.tmp_ass,
             '-t', str(end - start),
             '-c:v', 'libx264',
-            '-async', '1',
-            '-an',
+            # '-async', '1',
+            # '-an',
             output,
             '-n'
         ], check=True)
+
         os.remove(self.tmp_ass)
 
 

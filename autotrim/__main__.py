@@ -1,10 +1,8 @@
-from autogif.subtitle_finder import SubtitleFinder
-from autogif.subtitle_extractor import SubtitleExtractor
-from autogif.gif_extractor import GifExtractor
-import autogif.subtitle_finder as sub_tools
+from autotrim.subtitle_finder import SubtitleFinder
+from autotrim.subtitle_extractor import SubtitleExtractor
+from autotrim.gif_extractor import GifExtractor
+import autotrim.subtitle_finder as sub_tools
 import argparse
-import sys
-import logging
 from pathlib import Path
 import os
 
@@ -28,8 +26,8 @@ def run(video_filename, quote, best_match=False, padding_seconds=1.5, skip_subsy
     else:
         [subtitles_filename, subtitles_synced] = subtitle_finder.download_subtitles(video_filename, imdb_id)
 
-    # if not subtitles_synced and not skip_subsync:
-    subtitles_filename = subtitle_finder.sync_subtitles(video_filename, subtitles_filename)
+    if not subtitles_synced and not skip_subsync:
+        subtitles_filename = subtitle_finder.sync_subtitles(video_filename, subtitles_filename)
 
     subtitles = sub_tools.read_subtitles(subtitles_filename)
 
@@ -47,7 +45,7 @@ def run(video_filename, quote, best_match=False, padding_seconds=1.5, skip_subsy
 
 def get_parser():
     parser = argparse.ArgumentParser()
-    parser.description = 'AutoGIF extracts relevant clips from a video based on your provided quote. Example usage: ' \
+    parser.description = 'AutoTrim extracts relevant clips from a video based on your provided quote. Example usage: ' \
                          '{0} -v Forest.Gump.1994.1080p.mkv -q \'box of chocolates\''.format(parser.prog)
     parser.add_argument(
         '-v', '--video-filename',
