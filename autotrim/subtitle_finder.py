@@ -9,12 +9,12 @@ from ffsubsync import subsync
 
 class SubtitleFinder:
 
-    def __init__(self, dir_name):
+    def __init__(self, dir_name, ost_username, ost_password, tmdb_key):
         self.ost = OpenSubtitles()
-        self.login(os.environ['ost_username'], os.environ['ost_password'])
+        self.login(ost_username, ost_password)
         self.ost_language = 'eng'
         self.dir_name = dir_name
-        tmdb.API_KEY = os.environ['tmdb_key']
+        tmdb.API_KEY = tmdb_key
         self.tmdb_language = 'en'
         self.subsync_parser = subsync.make_parser()
 

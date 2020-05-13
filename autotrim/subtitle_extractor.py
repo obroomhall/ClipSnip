@@ -21,7 +21,7 @@ class SubtitleExtractor:
             index=NUMERIC(stored=True),
             content=TEXT(stored=True))
 
-    def search_subtitles(self, subtitles, search_str, best_match=False):
+    def search_subtitles(self, subtitles, search_str):
 
         ix = create_in(self.dir_name, self.schema)
         ix_writer = ix.writer()

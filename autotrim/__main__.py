@@ -19,7 +19,7 @@ def run(video_filename, quote, best_match=False, padding_seconds=1.5, skip_subsy
     tmp_dir = '.tmp/'
     Path(tmp_dir).mkdir(parents=True, exist_ok=True)
 
-    subtitle_finder = SubtitleFinder(tmp_dir)
+    subtitle_finder = SubtitleFinder(tmp_dir, ost_username, ost_password, tmdb_key)
     if subtitle_filename:
         subtitles_filename = subtitle_filename
         subtitles_synced = False
