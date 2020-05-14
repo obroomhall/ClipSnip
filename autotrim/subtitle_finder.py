@@ -1,13 +1,15 @@
 from pythonopensubtitles.opensubtitles import OpenSubtitles
 from pythonopensubtitles.utils import File
-import PTN
 import tmdbsimple as tmdb
 import os
 import srt
 from ffsubsync import subsync
+import media_filename_parser
 
 
 class SubtitleFinder:
+
+
 
     def __init__(self, dir_name, ost_username, ost_password, tmdb_key):
         self.ost = OpenSubtitles()
@@ -93,23 +95,24 @@ def read_subtitles(filename):
 
 def find_imdb_id(filename):
 
-    name_info = PTN.parse(filename)
     search = tmdb.Search()
+    parsed = media_filename_parser.parse(filename)
 
-    if 'season' in name_info and 'episode' in name_info:
-        response = search.tv(query=name_info['title'])
-        tmdb_id = response['results'][0]['id']
-        tv = tmdb.tv.TV_Episodes(tmdb_id, name_info['season'], name_info['episode'])
-        return tv.external_ids()['imdb_id'][2:]
-    else:
-        if 'year' in name_info:
+    if parsed.is_movie():
+        if parsed.year:
             response = search.movie(
-                query=name_info['title'],
-                year=name_info['year'])
+                query=parsed.title,
+                year=parsed.year)
             if 'results' not in response or ('results' in response and not response['results']):
-                response = search.movie(query=name_info['title'])
+                response = search.movie(query=parsed.title)
         else:
-            response = search.movie(query=name_info['title'])
+            response = search.movie(query=parsed.title)
 
         movie = tmdb.movies.Movies(response['results'][0]['id'])
-        return movie.external_ids()['imdb_id'][2:]
+        return movie.external_ids()['imdb_id']
+
+    else:
+        response = search.tv(query=parsed.title)
+        tmdb_id = response['results'][0]['id']
+        tv = tmdb.tv.TV_Episodes(tmdb_id, parsed.season, parsed.episode)
+        return tv.external_ids()['imdb_id']

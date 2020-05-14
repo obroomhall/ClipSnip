@@ -24,7 +24,6 @@ setuptools.setup(
         'whoosh',
         'tmdbsimple',
         'scenedetect[opencv,progress_bar]',
-        'parse-torrent-name',
         'ffsubsync'
     ],
     python_requires='>=2.6, <3.8'
