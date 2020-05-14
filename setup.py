@@ -26,5 +26,5 @@ setuptools.setup(
         'scenedetect[opencv,progress_bar]',
         'ffsubsync'
     ],
-    python_requires='>=2.6, <3.8'
+    python_requires='>=3.5, <=3.8'
 )
