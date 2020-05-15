@@ -1,8 +1,8 @@
-import autotrim.media_filename_parser as parser
+import autotrim.media_detector as parser
 import unittest
 
 
-class MediaDetectionTest(unittest.TestCase):
+class MediaDetectorTest(unittest.TestCase):
 
     def test_parse_movies(self):
 
@@ -68,6 +68,8 @@ class MediaDetectionTest(unittest.TestCase):
             self.assertTrue(parsed.title.startswith(title))
             self.assertEqual(int(parsed.season), season)
             self.assertEqual(int(parsed.episode), episode)
+
+    def test_not_parse_tv(self):
 
         bad_candidates = [
             'Black.Mirror.S02.Special.White.Christmas.1080p.WEB-DL.DD2.0.H.264-CasStudio.mkv',

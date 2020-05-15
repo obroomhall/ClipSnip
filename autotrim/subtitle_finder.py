@@ -4,7 +4,7 @@ import tmdbsimple as tmdb
 import os
 import srt
 from ffsubsync import subsync
-import media_filename_parser
+import media_detector
 
 
 class SubtitleFinder:
@@ -96,7 +96,7 @@ def read_subtitles(filename):
 def find_imdb_id(filename):
 
     search = tmdb.Search()
-    parsed = media_filename_parser.parse(filename)
+    parsed = media_detector.parse(filename)
 
     if parsed.is_movie():
         if parsed.year:

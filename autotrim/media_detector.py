@@ -1,7 +1,7 @@
 import re
 
 
-class ParsedMediaInfo:
+class MediaInfo:
 
     def __init__(self, title, is_movie, year=None, season=None, episode=None):
         self.title = title
@@ -12,7 +12,7 @@ class ParsedMediaInfo:
 
 
 year_pattern = re.compile('[. ]\\(?(?P<year>(19|2\\d)\\d{2})\\)?[. ]')
-tv_pattern = re.compile('[. ][Ss](?P<season>\\d{1,2})[Ee][Pp]?(?P<episode>\\d{1,2})[. ]')
+season_episode_pattern = re.compile('[. ][Ss](?P<season>\\d{1,2})[Ee][Pp]?(?P<episode>\\d{1,2})[. ]')
 
 
 def parse(filename):
@@ -28,7 +28,7 @@ def parse(filename):
         year = year_match[1]
         is_movie = True
     else:
-        tv_match = tv_pattern.search(filename)
+        tv_match = season_episode_pattern.search(filename)
         if tv_match:
             title_end = tv_match.start(0)
             season = tv_match.group('season')
@@ -43,4 +43,4 @@ def parse(filename):
         raw_title = filename[:title_end]
 
     title = raw_title.replace('.', ' ')
-    return ParsedMediaInfo(title, is_movie, year, season, episode)
+    return MediaInfo(title, is_movie, year, season, episode)
