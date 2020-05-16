@@ -15,19 +15,19 @@ output-1 | output-2
 * Frame perfect scene extraction
 
 ## Installation
-1. Install [ffmpeg](https://ffmpeg.org/).
+1. Ensure you have [ffmpeg](https://ffmpeg.org/) installed.
     ```
     sudo apt-get install ffmpeg
     ```
-2. (Optional) Install my fork of [PySceneDetect](https://github.com/obroomhall/PySceneDetect.git), recommended as it fixes a seeking limitation in the original repo, resulting in significantly decreased runtime.
+2. (Optional) Install my fork of [PySceneDetect](https://github.com/obroomhall/PySceneDetect.git). Recommended as it fixes a seeking limitation in the original repo, resulting in significantly decreased runtime.
     ```
     pip install git+https://github.com/obroomhall/PySceneDetect.git
     ```
-3. Install autotrim. If you do not have OpenCV already installed on your system, use this:
+3. Install autotrim. If you do not have OpenCV already installed on your system, use:
     ```
     pip install autotrim[opencv]
     ```
-    Otherwise, install with this:
+    Otherwise, install with:
     ```
     pip install autotrim
     ```

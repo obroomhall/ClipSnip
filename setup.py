@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='autotrim',
-    version='0.0.11',
+    version='0.0.12',
     packages=setuptools.find_packages(),
     url='https://github.com/obroomhall/autotrim',
     author='Oliver Broomhall',
@@ -29,5 +29,5 @@ setuptools.setup(
     extras_require={
         'opencv': ['opencv-python'],
     },
-    python_requires='>=3.5, <=3.8'
+    python_requires='>=3.5, <4'
 )
