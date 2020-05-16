@@ -1,7 +1,6 @@
 # AutoTrim
 ## Overview
 AutoTrim is a command line tool that can take just 2 arguments; a path to a video file, and a quote to search for. What it aims to return is a set of short, relevant clips from that file, like this:
-
 ```
 autotrim -q "nicest" -v "Community.S01E01.1080p.BluRay.x264.mkv"
 ```
@@ -20,15 +19,15 @@ output-1 | output-2
 ```
 sudo apt-get install ffmpeg
 ```
-2. (Optional) Install my branch of [PySceneDetect](https://github.com/obroomhall/PySceneDetect.git). You should do this step because the [official repository](https://github.com/Breakthrough/PySceneDetect) has a limitation for skipping forward in video, which I was able to fix. So until they either update their code, or accept my [pull request](https://github.com/Breakthrough/PySceneDetect/pull/163), I recommend using my repository.
+2. (Optional) Install my fork of [PySceneDetect](https://github.com/obroomhall/PySceneDetect.git), recommended as it fixes a seeking limitation in the original repo, resulting in significantly decreased runtime.
 ```
-git clone https://github.com/obroomhall/PySceneDetect.git \
-&& cd PySceneDetect \
-&& python setup.py install \
-&& cd .. \
-&& rm -rf PySceneDetect
+pip install git+https://github.com/obroomhall/PySceneDetect.git
 ```
-3. Install AutoTrim.
+3. Install autotrim. If you do not have OpenCV already installed on your system, use this:
+```
+pip install autotrim[opencv]
+```
+Otherwise, install with this:
 ```
 pip install autotrim
 ```

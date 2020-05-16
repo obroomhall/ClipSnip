@@ -23,8 +23,11 @@ setuptools.setup(
         'python-opensubtitles',
         'whoosh',
         'tmdbsimple',
-        'scenedetect[opencv,progress_bar]',
-        'ffsubsync'
+        'scenedetect[progress_bar]',
+        'ffsubsync',
     ],
+    extras_require={
+        'opencv': ['opencv-python'],
+    },
     python_requires='>=3.5, <=3.8'
 )
