@@ -16,21 +16,21 @@ output-1 | output-2
 
 ## Installation
 1. Install [ffmpeg](https://ffmpeg.org/).
-```
-sudo apt-get install ffmpeg
-```
+    ```
+    sudo apt-get install ffmpeg
+    ```
 2. (Optional) Install my fork of [PySceneDetect](https://github.com/obroomhall/PySceneDetect.git), recommended as it fixes a seeking limitation in the original repo, resulting in significantly decreased runtime.
-```
-pip install git+https://github.com/obroomhall/PySceneDetect.git
-```
+    ```
+    pip install git+https://github.com/obroomhall/PySceneDetect.git
+    ```
 3. Install autotrim. If you do not have OpenCV already installed on your system, use this:
-```
-pip install autotrim[opencv]
-```
-Otherwise, install with this:
-```
-pip install autotrim
-```
+    ```
+    pip install autotrim[opencv]
+    ```
+    Otherwise, install with this:
+    ```
+    pip install autotrim
+    ```
 
 ## Major Credits
 * [PySceneDetect](https://github.com/Breakthrough/PySceneDetect), for detecting start and end of scenes

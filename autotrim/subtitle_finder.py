@@ -96,7 +96,7 @@ def find_imdb_id(filename):
     search = tmdb.Search()
     parsed = media_detector.parse(filename)
 
-    if parsed.is_movie():
+    if parsed.is_movie:
         if parsed.year:
             response = search.movie(
                 query=parsed.title,
