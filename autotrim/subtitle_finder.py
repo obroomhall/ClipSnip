@@ -4,12 +4,10 @@ import tmdbsimple as tmdb
 import os
 import srt
 from ffsubsync import subsync
-import media_detector
+import autotrim.media_detector as media_detector
 
 
 class SubtitleFinder:
-
-
 
     def __init__(self, dir_name, ost_username, ost_password, tmdb_key):
         self.ost = OpenSubtitles()
