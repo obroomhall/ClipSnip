@@ -12,65 +12,36 @@ import autotrim.filename_parser
 
 class SubtitleFinder:
 
-    def __init__(self, dir_name, ost_username, ost_password, tmdb_key):
+    def __init__(self, dir_name, ost_username, ost_password):
         self.ost = OpenSubtitles()
-        self.login(ost_username, ost_password)
+        self.ost.login(ost_username, ost_password)
         self.ost_language = 'eng'
         self.dir_name = dir_name
         self.subsync_parser = subsync.make_parser()
-        self.media_searcher = MediaSearcher(tmdb_key)
 
-    def login(self, username, password):
-        self.ost.login(username, password)
+    def download_subtitles_by_hash(self, source):
+        f = File(source)
+        subs_data = self.ost.search_subtitles([{
+            'sublanguageid': self.ost_language,
+            'moviehash': f.get_hash(),
+            'moviebytesize': f.size
+        }])
+        if subs_data:
+            return self.download_subtitles(subs_data)
 
-    def download_subtitles(self, source, imdb_id=None):
+    def download_subtitles_by_id(self, imdb_id):
+        subs_data = self.ost.search_subtitles([{
+            'sublanguageid': self.ost_language,
+            'imdbid': imdb_id,
+        }])
+        if subs_data:
+            return self.download_subtitles(subs_data)
 
-        if imdb_id:
-            data = self.ost.search_subtitles([{
-                'sublanguageid': self.ost_language,
-                'imdbid': imdb_id if imdb_id[:2] != 'tt' else imdb_id[2:],
-            }])
-            synced = False
-        else:
-            f = File(source)
-            data = self.ost.search_subtitles([{
-                'sublanguageid': self.ost_language,
-                'moviehash': f.get_hash(),
-                'moviebytesize': f.size
-            }])
-
-            if data:
-                synced = True
-            else:
-                filename = source.split('/')[-1]
-                parsed_media = filename_parser.parse(filename)
-                if parsed_media is ParsedMovie:
-                    imdb_id = self.media_searcher.search_movie(
-                        parsed_media.title,
-                        parsed_media.year
-                    )
-                else:
-                    imdb_id = self.media_searcher.search_tv(
-                        parsed_media.title,
-                        parsed_media.season,
-                        parsed_media.episode
-                    )
-
-                data = self.ost.search_subtitles([{
-                    'sublanguageid': self.ost_language,
-                    'imdbid': imdb_id,
-                }])
-                synced = False
-
-        try:
-            id_subtitle_file = data[0].get('IDSubtitleFile')
-        except Exception:
-            raise Exception("Failed to find media in IMDb for ID={0}.".format(imdb_id))
-
+    def download_subtitles(self, data):
+        id_subtitle_file = data[0].get('IDSubtitleFile')
         self.ost.download_subtitles([id_subtitle_file], output_directory=self.dir_name)
         subtitle_filename = os.path.join(self.dir_name, id_subtitle_file + '.srt')
-
-        return [subtitle_filename, synced]
+        return subtitle_filename
 
     def sync_subtitles(self, video_filename, subs_filename):
 

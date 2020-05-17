@@ -23,15 +23,15 @@ def parse(filename):
     if year_matches:
         year_match = year_matches[-1]
         title_end = year_match[0]
-        year = year_match[1]
+        year = int(year_match[1])
         title = get_title(filename, title_end)
         return ParsedMovie(title, year)
     else:
         tv_match = season_episode_pattern.search(filename)
         if tv_match:
             title_end = tv_match.start(0)
-            season = tv_match.group('season')
-            episode = tv_match.group('episode')
+            season = int(tv_match.group('season'))
+            episode = int(tv_match.group('episode'))
             title = get_title(filename, title_end)
             return ParsedSeries(title, season, episode)
 

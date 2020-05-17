@@ -1,3 +1,6 @@
+from autotrim import filename_parser, media_searcher
+from autotrim.filename_parser import ParsedMovie
+from autotrim.media_searcher import MediaSearcher
 from autotrim.subtitle_finder import SubtitleFinder
 from autotrim.subtitle_extractor import SubtitleExtractor
 from autotrim.gif_extractor import GifExtractor
@@ -14,17 +17,35 @@ def main():
 
 
 def run(video_filename, quote, best_match=False, padding_seconds=1.5, skip_subsync=False,
-        subtitle_filename=None, imdb_id=None, ost_username=None, ost_password=None, tmdb_key=None):
+        subtitles_filename=None, imdb_id=None, ost_username=None, ost_password=None, tmdb_key=None):
 
     tmp_dir = '.tmp/'
     Path(tmp_dir).mkdir(parents=True, exist_ok=True)
 
-    subtitle_finder = SubtitleFinder(tmp_dir, ost_username, ost_password, tmdb_key)
-    if subtitle_filename:
-        subtitles_filename = subtitle_filename
-        subtitles_synced = False
-    else:
-        [subtitles_filename, subtitles_synced] = subtitle_finder.download_subtitles(video_filename, imdb_id)
+    subtitle_finder = SubtitleFinder(tmp_dir, ost_username, ost_password)
+    subtitles_synced = False
+    if not subtitles_filename:
+        subtitles_filename = subtitle_finder.download_subtitles_by_hash(video_filename)
+        if subtitles_filename:
+            subtitles_synced = True
+        else:
+            if not imdb_id:
+                media_searcher = MediaSearcher(tmdb_key)
+                filename = video_filename.split('/')[-1]
+                parsed_media = filename_parser.parse(filename)
+                if parsed_media is ParsedMovie:
+                    imdb_id = media_searcher.search_movie(
+                        parsed_media.title,
+                        parsed_media.year
+                    )
+                else:
+                    imdb_id = media_searcher.search_tv(
+                        parsed_media.title,
+                        parsed_media.season,
+                        parsed_media.episode
+                    )
+            imdb_id = imdb_id if imdb_id[:2] != 'tt' else imdb_id[2:]
+            subtitles_filename = subtitle_finder.download_subtitles_by_id(imdb_id)
 
     if not subtitles_synced and not skip_subsync:
         subtitles_filename = subtitle_finder.sync_subtitles(video_filename, subtitles_filename)
@@ -71,7 +92,7 @@ def get_parser():
         action='store_true',
         help='Skip syncing subtitles to audio track')
     parser.add_argument(
-        '-s', '--subtitle-filename',
+        '-s', '--subtitles-filename',
         help='Use local subtitle file instead of finding one online')
     parser.add_argument(
         '--ost-username',

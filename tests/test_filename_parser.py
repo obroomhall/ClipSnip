@@ -10,15 +10,15 @@ class FilenameParserTest(unittest.TestCase):
         for candidate in candidates.get_movie_candidates():
             parsed = parser.parse(candidate.filename)
             self.assertTrue(parsed.title.startswith(candidate.title))
-            self.assertEqual(int(parsed.year), candidate.year)
+            self.assertEqual(parsed.year, candidate.year)
 
     def test_parse_tv(self):
 
         for candidate in candidates.get_tv_candidates():
             parsed = parser.parse(candidate.filename)
             self.assertTrue(parsed.title.startswith(candidate.title))
-            self.assertEqual(int(parsed.season), candidate.season)
-            self.assertEqual(int(parsed.episode), candidate.episode)
+            self.assertEqual(parsed.season, candidate.season)
+            self.assertEqual(parsed.episode, candidate.episode)
 
     def test_not_parse_tv(self):
 
