@@ -25,9 +25,25 @@ setuptools.setup(
         'tmdbsimple',
         'scenedetect[progress_bar]',
         'ffsubsync',
+        'wheel',
     ],
     extras_require={
         'opencv': ['opencv-python'],
     },
-    python_requires='>=3.5, <4'
+    python_requires='>=3.5, <4',
+    license='MIT',
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Developers',
+        'Intended Audience :: End Users/Desktop',
+        'Topic :: Multimedia :: Video',
+        'Topic :: Software Development :: Build Tools',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Operating System :: OS Independent',
+    ],
+    keywords='ffmpeg trim subtitles gif gifv video media tv film movie clip',
 )

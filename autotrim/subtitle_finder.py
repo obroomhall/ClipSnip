@@ -1,10 +1,13 @@
 from pythonopensubtitles.opensubtitles import OpenSubtitles
 from pythonopensubtitles.utils import File
-import tmdbsimple as tmdb
 import os
 import srt
 from ffsubsync import subsync
-import autotrim.media_detector as media_detector
+
+from autotrim import filename_parser
+from autotrim.media_searcher import MediaSearcher
+from autotrim.filename_parser import ParsedMovie,ParsedSeries
+import autotrim.filename_parser
 
 
 class SubtitleFinder:
@@ -14,9 +17,8 @@ class SubtitleFinder:
         self.login(ost_username, ost_password)
         self.ost_language = 'eng'
         self.dir_name = dir_name
-        tmdb.API_KEY = tmdb_key
-        self.tmdb_language = 'en'
         self.subsync_parser = subsync.make_parser()
+        self.media_searcher = MediaSearcher(tmdb_key)
 
     def login(self, username, password):
         self.ost.login(username, password)
@@ -41,13 +43,22 @@ class SubtitleFinder:
                 synced = True
             else:
                 filename = source.split('/')[-1]
-                try:
-                    imdb_id = find_imdb_id(filename)
-                except Exception:
-                    raise Exception("Failed to find media in IMDb. Try specifying an IMDb ID with -i or --imdb-id.")
+                parsed_media = filename_parser.parse(filename)
+                if parsed_media is ParsedMovie:
+                    imdb_id = self.media_searcher.search_movie(
+                        parsed_media.title,
+                        parsed_media.year
+                    )
+                else:
+                    imdb_id = self.media_searcher.search_tv(
+                        parsed_media.title,
+                        parsed_media.season,
+                        parsed_media.episode
+                    )
+
                 data = self.ost.search_subtitles([{
                     'sublanguageid': self.ost_language,
-                    'imdbid': imdb_id if imdb_id[:2] != 'tt' else imdb_id[2:],
+                    'imdbid': imdb_id,
                 }])
                 synced = False
 
@@ -89,28 +100,3 @@ def read_subtitles(filename):
         raw_subs = f.read()
         subtitle_generator = srt.parse(raw_subs)
         return list(subtitle_generator)
-
-
-def find_imdb_id(filename):
-
-    search = tmdb.Search()
-    parsed = media_detector.parse(filename)
-
-    if parsed.is_movie:
-        if parsed.year:
-            response = search.movie(
-                query=parsed.title,
-                year=parsed.year)
-            if 'results' not in response or ('results' in response and not response['results']):
-                response = search.movie(query=parsed.title)
-        else:
-            response = search.movie(query=parsed.title)
-
-        movie = tmdb.movies.Movies(response['results'][0]['id'])
-        return movie.external_ids()['imdb_id']
-
-    else:
-        response = search.tv(query=parsed.title)
-        tmdb_id = response['results'][0]['id']
-        tv = tmdb.tv.TV_Episodes(tmdb_id, parsed.season, parsed.episode)
-        return tv.external_ids()['imdb_id']
