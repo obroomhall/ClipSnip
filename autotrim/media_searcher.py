@@ -35,8 +35,6 @@ def get_tmdb_id(tmdb_search_response):
 
 def get_imdb_id(tmdb_find_response):
     try:
-        raw_id = tmdb_find_response.external_ids()['imdb_id']
-        imdb_id = raw_id if raw_id[:2] != 'tt' else raw_id[2:]
-        return imdb_id
+        return tmdb_find_response.external_ids()['imdb_id']
     except IndexError:
         raise IndexError("Could not find IMDb ID in response.")

@@ -1,4 +1,4 @@
-from autotrim import filename_parser, media_searcher
+from autotrim import filename_parser
 from autotrim.filename_parser import ParsedMovie
 from autotrim.media_searcher import MediaSearcher
 from autotrim.subtitle_finder import SubtitleFinder
@@ -44,7 +44,6 @@ def run(video_filename, quote, best_match=False, padding_seconds=1.5, skip_subsy
                         parsed_media.season,
                         parsed_media.episode
                     )
-            imdb_id = imdb_id if imdb_id[:2] != 'tt' else imdb_id[2:]
             subtitles_filename = subtitle_finder.download_subtitles_by_id(imdb_id)
 
     if not subtitles_synced and not skip_subsync:
