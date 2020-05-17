@@ -1,13 +1,11 @@
-from pythonopensubtitles.opensubtitles import OpenSubtitles
-from pythonopensubtitles.utils import File
 import os
+
 import srt
 from ffsubsync import subsync
+from pythonopensubtitles.opensubtitles import OpenSubtitles
+from pythonopensubtitles.utils import File
 
-from autotrim import filename_parser
-from autotrim.media_searcher import MediaSearcher
-from autotrim.filename_parser import ParsedMovie,ParsedSeries
-import autotrim.filename_parser
+from autotrim.filename_parser import ParsedMovie, ParsedSeries
 
 
 class SubtitleFinder:
@@ -19,26 +17,32 @@ class SubtitleFinder:
         self.dir_name = dir_name
         self.subsync_parser = subsync.make_parser()
 
-    def download_subtitles_by_hash(self, source):
+    def find(self, imdb_id, parsed_media):
+        if imdb_id:
+            return self.find_subtitles(
+                imdbid=imdb_id)
+        elif isinstance(parsed_media, ParsedMovie):
+            return self.find_subtitles(
+                query=parsed_media.title)
+        elif isinstance(parsed_media, ParsedSeries):
+            return self.find_subtitles(
+                query=parsed_media.title,
+                season=parsed_media.season,
+                episode=parsed_media.episode)
+
+    def find_subtitles_by_hash(self, source):
         f = File(source)
-        subs_data = self.ost.search_subtitles([{
-            'sublanguageid': self.ost_language,
-            'moviehash': f.get_hash(),
-            'moviebytesize': f.size
-        }])
-        if subs_data:
-            return self.download_subtitles(subs_data)
+        return self.find_subtitles(moviehash=f.get_hash(), moviebytesize=f.size)
 
-    def download_subtitles_by_id(self, imdb_id):
-        subs_data = self.ost.search_subtitles([{
-            'sublanguageid': self.ost_language,
-            'imdbid': imdb_id,
-        }])
-        if subs_data:
-            return self.download_subtitles(subs_data)
+    def find_subtitles(self, **request):
+        request.update(sublanguageid=self.ost_language)
+        if 'imdbid' in request and request['imdbid'][:2] == 'tt':
+            request.update(imdbid=request['imdbid'][2:])
+        subs_data = self.ost.search_subtitles([request])
+        return subs_data
 
-    def download_subtitles(self, data):
-        id_subtitle_file = data[0].get('IDSubtitleFile')
+    def download_subtitles(self, subs_data):
+        id_subtitle_file = subs_data[0].get('IDSubtitleFile')
         self.ost.download_subtitles([id_subtitle_file], output_directory=self.dir_name)
         subtitle_filename = os.path.join(self.dir_name, id_subtitle_file + '.srt')
         return subtitle_filename

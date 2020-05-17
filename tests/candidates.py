@@ -71,15 +71,9 @@ def get_tv_candidates():
         TVCandidate(
             'Family.Guy.S12E01.Finders.Keepers.1080p.WEB-DL.DD5.1.H.264-CtrlHD.mkv',
             'Family Guy', 1434, 'tt2913958', 12, 1),
-        # TVCandidate(
-        #     'Mad.Men.S01E01.BluRay.1080p.x264.H@M.mkv',
-        #     'Mad Men', 1104, 'tt1059578', 1, 1),
         TVCandidate(
             'La.Casa.de.Papel.S01E01.1080p.NF.WEB-DL.DDP2.0.x264-Mooi1990.mkv',
             'La Casa de Papel', 71446, 'tt6807344', 1, 1),
-        # TVCandidate(
-        #     'Ozark.S03E01.Wartime.1080p.NF.WEB-DL.DDP5.1.x264-NTb.mkv',
-        #     'Ozark', 69740, 'tt9108660', 3, 1),
         TVCandidate(
             'Star.Wars.The.Clone.Wars.S01E11.Dooku.Captured.1080p.BluRay.REMUX.VC-1.DD.5.1-EPSiLON.mkv',
             'Star Wars The Clone Wars', 12180, 'tt1322835', 1, 11),
@@ -92,6 +86,14 @@ def get_tv_candidates():
         TVCandidate(
             'Westworld.S03E07.Passed.Pawn.1080p.AMZN.WEB-DL.DDP5.1.H.264-NTb.mkv',
             'Westworld', 63247, 'tt10011158', 3, 7),
+        # These shows have no IMDb ID attached to them in TMDb, which shows their database is incomplete. OpenSubtitles
+        # only accepts
+        # TVCandidate(
+        #     'Mad.Men.S01E01.BluRay.1080p.x264.H@M.mkv',
+        #     'Mad Men', 1104, 'tt1059578', 1, 1),
+        # TVCandidate(
+        #     'Ozark.S03E01.Wartime.1080p.NF.WEB-DL.DDP5.1.x264-NTb.mkv',
+        #     'Ozark', 69740, 'tt9108660', 3, 1),
     ]
 
 

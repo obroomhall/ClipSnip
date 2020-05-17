@@ -1,11 +1,26 @@
 import tmdbsimple as tmdb
 
+from autotrim.filename_parser import ParsedMovie, ParsedSeries
+
 
 class MediaSearcher:
 
     def __init__(self, api_key):
         tmdb.API_KEY = api_key
         self.tmdb_searcher = tmdb.Search()
+
+    def search(self, parsed_media):
+        if isinstance(parsed_media, ParsedMovie):
+            return self.search_movie(
+                parsed_media.title,
+                parsed_media.year
+            )
+        elif isinstance(parsed_media, ParsedSeries):
+            return self.search_tv(
+                parsed_media.title,
+                parsed_media.season,
+                parsed_media.episode
+            )
 
     def search_movie(self, title, year=None):
         if year:
