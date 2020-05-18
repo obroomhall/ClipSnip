@@ -15,7 +15,7 @@ class ParsedSeries:
 
 
 year_pattern = re.compile('[. ]\\(?(?P<year>(19|2\\d)\\d{2})\\)?[. ]')
-season_episode_pattern = re.compile('[. ][Ss](?P<season>\\d{1,2})[Ee][Pp]?(?P<episode>\\d{1,2})[. ]')
+season_episode_pattern = re.compile('[. ][Ss](?P<season>\\d{1,2})[Ee](?P<episode>\\d{1,2})[. ]')
 
 
 def parse(filename):

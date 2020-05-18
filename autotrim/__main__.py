@@ -1,13 +1,14 @@
-from autotrim import filename_parser
-from autotrim.filename_parser import ParsedMovie, ParsedSeries
-from autotrim.media_searcher import MediaSearcher
-from autotrim.subtitle_finder import SubtitleFinder
-from autotrim.subtitle_extractor import SubtitleExtractor
-from autotrim.gif_extractor import GifExtractor
-import autotrim.subtitle_finder as sub_tools
 import argparse
-from pathlib import Path
 import os
+from pathlib import Path
+
+import autotrim.subtitle.io as sub_io
+import autotrim.subtitle.sync as sub_sync
+from autotrim import filename_parser
+from autotrim.gif_extractor import GifExtractor
+from autotrim.media_searcher import MediaSearcher
+from autotrim.subtitle.find import SubtitleFinder
+from autotrim.subtitle.search import SubtitleExtractor
 
 
 def main():
@@ -22,30 +23,15 @@ def run(video_filename, quote, best_match=False, padding_seconds=1.5, skip_subsy
     tmp_dir = '.tmp/'
     Path(tmp_dir).mkdir(parents=True, exist_ok=True)
 
-    subtitle_finder = SubtitleFinder(tmp_dir, ost_username, ost_password)
     subtitles_synced = False
     if not subtitles_filename:
-        subs_data = subtitle_finder.find_subtitles_by_hash(video_filename)
-        if subs_data:
-            subtitles_synced = True
-        else:
-            if imdb_id:
-                subs_data = subtitle_finder.find_subtitles(imdbid=imdb_id)
-            else:
-                parsed_media = filename_parser.parse(video_filename)
-                media_searcher = MediaSearcher(tmdb_key)
-                imdb_id = media_searcher.search(parsed_media)
-                subs_data = subtitle_finder.find(imdb_id, parsed_media)
-
-        if subs_data:
-            subtitles_filename = subtitle_finder.download_subtitles(subs_data)
-        else:
-            raise LookupError("Could not find subtitles for file.")
+        (subtitles_filename, subtitles_synced) = \
+            find_subtitles(video_filename, imdb_id, tmp_dir, ost_username, ost_password, tmdb_key)
 
     if not subtitles_synced and not skip_subsync:
-        subtitles_filename = subtitle_finder.sync_subtitles(video_filename, subtitles_filename)
+        subtitles_filename = sub_sync.sync_subtitles(video_filename, subtitles_filename, tmp_dir)
 
-    subtitles = sub_tools.read_subtitles(subtitles_filename)
+    subtitles = sub_io.read_subtitles(subtitles_filename)
 
     subtitle_extractor = SubtitleExtractor(tmp_dir)
     extracted_subs = subtitle_extractor.search_subtitles(subtitles, quote)
@@ -57,6 +43,29 @@ def run(video_filename, quote, best_match=False, padding_seconds=1.5, skip_subsy
     gif_extractor.extract_gif(video_filename, extracted_subs)
 
     # Path(tmp_dir).rmdir()
+
+
+def find_subtitles(video_filename, imdb_id, tmp_dir, ost_username, ost_password, tmdb_key):
+
+    subtitle_finder = SubtitleFinder(tmp_dir, ost_username, ost_password)
+
+    subtitles_synced = False
+    subs_data = subtitle_finder.find_subtitles_by_hash(video_filename)
+    if subs_data:
+        subtitles_synced = True
+    else:
+        if imdb_id:
+            subs_data = subtitle_finder.find_subtitles(imdbid=imdb_id)
+        else:
+            parsed_media = filename_parser.parse(video_filename)
+            media_searcher = MediaSearcher(tmdb_key)
+            imdb_id = media_searcher.search(parsed_media)
+            subs_data = subtitle_finder.find(imdb_id, parsed_media)
+
+    if subs_data:
+        return subtitle_finder.download_subtitles(subs_data), subtitles_synced
+    else:
+        raise LookupError("Could not find subtitles for file.")
 
 
 def get_parser():

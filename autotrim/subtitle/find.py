@@ -1,6 +1,5 @@
 import os
 
-import srt
 from ffsubsync import subsync
 from pythonopensubtitles.opensubtitles import OpenSubtitles
 from pythonopensubtitles.utils import File
@@ -15,7 +14,6 @@ class SubtitleFinder:
         self.ost.login(ost_username, ost_password)
         self.ost_language = 'eng'
         self.dir_name = dir_name
-        self.subsync_parser = subsync.make_parser()
 
     def find(self, imdb_id, parsed_media):
         if imdb_id:
@@ -46,32 +44,3 @@ class SubtitleFinder:
         self.ost.download_subtitles([id_subtitle_file], output_directory=self.dir_name)
         subtitle_filename = os.path.join(self.dir_name, id_subtitle_file + '.srt')
         return subtitle_filename
-
-    def sync_subtitles(self, video_filename, subs_filename):
-
-        subtitles = read_subtitles(subs_filename)
-
-        # subsync doesn't like some srt files from OpenSubtitles, so we
-        # save them to our own file with utf-8 encoding
-        encoded_subs_filename = os.path.join(self.dir_name, 'encoded.srt')
-        with open(encoded_subs_filename, 'w') as f:
-            f.write(srt.compose(subtitles))
-
-        synced_subs_filename = os.path.join(self.dir_name, 'synced.srt')
-        self.run_subsync(video_filename, encoded_subs_filename, synced_subs_filename)
-        return synced_subs_filename
-
-    def run_subsync(self, reference, srtin, srtout):
-        subsync_args = self.subsync_parser.parse_args([
-            reference,
-            '-i', srtin,
-            '-o', srtout
-        ])
-        subsync.run(subsync_args)
-
-
-def read_subtitles(filename):
-    with open(filename, 'r') as f:
-        raw_subs = f.read()
-        subtitle_generator = srt.parse(raw_subs)
-        return list(subtitle_generator)
