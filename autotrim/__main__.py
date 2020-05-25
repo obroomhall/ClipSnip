@@ -3,6 +3,8 @@ import os
 import shutil
 from pathlib import Path
 
+import pysubs2
+
 from autotrim import subtitle
 from autotrim.config import tmp_dir
 from autotrim.gif_extractor import GifExtractor
@@ -28,7 +30,7 @@ def run(video_filename, quote, best_match=False, padding_seconds=1.5, skip_subsy
             if subtitles is None:
                 raise LookupError("Could not find subtitles for file.")
         else:
-            subtitles = subtitle.read_subtitles(subtitles_filename)
+            subtitles = pysubs2.load(subtitles_filename)
 
         subtitle_extractor = SubtitleExtractor()
         extracted_subs = subtitle_extractor.search_subtitles(subtitles, quote)

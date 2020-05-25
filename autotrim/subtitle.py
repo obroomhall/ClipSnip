@@ -1,7 +1,7 @@
 import logging
 import tempfile
 
-import srt
+import pysubs2
 from ffsubsync import subsync
 from pythonopensubtitles.opensubtitles import OpenSubtitles
 from pythonopensubtitles.utils import File
@@ -77,16 +77,16 @@ class SubtitleFinder:
         id_subtitle_file = subs_data[0].get('IDSubtitleFile')
         subs_dict = self.ost.download_subtitles([id_subtitle_file], return_decoded_data=True)
         raw_subs = subs_dict.get(id_subtitle_file)
-        return list(srt.parse(raw_subs))
+        return pysubs2.SSAFile.from_string(raw_subs)
 
     def sync_subtitles(self, video_filename, subtitles):
         with tempfile.NamedTemporaryFile(delete=False, suffix='.srt') as tmp_unsynced:
-            tmp_unsynced.write(srt.compose(subtitles).encode())
+            tmp_unsynced.write(subtitles.to_string('srt').encode())
             tmp_unsynced.close()
             with tempfile.NamedTemporaryFile(suffix='.srt') as tmp_synced:
                 tmp_synced.close()
                 self.run_subsync(video_filename, tmp_unsynced.name, tmp_synced.name)
-                return read_subtitles(tmp_synced.name)
+                return pysubs2.load(tmp_synced.name)
 
     def run_subsync(self, reference, srtin, srtout):
         subsync.run(self.subsync_parser.parse_args([
@@ -94,10 +94,3 @@ class SubtitleFinder:
             '-i', srtin,
             '-o', srtout
         ]))
-
-
-def read_subtitles(filename):
-    with open(filename, 'r') as f:
-        raw_subs = f.read()
-        subtitle_generator = srt.parse(raw_subs)
-        return list(subtitle_generator)

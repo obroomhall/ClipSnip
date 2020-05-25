@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='autotrim',
-    version='0.0.12',
+    version='0.0.13',
     packages=setuptools.find_packages(),
     url='https://github.com/obroomhall/autotrim',
     author='Oliver Broomhall',

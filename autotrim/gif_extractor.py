@@ -2,10 +2,10 @@ import datetime
 import os
 import re
 import subprocess
-import string
-from operator import itemgetter
-
-import srt
+import pysubs2
+import syllables
+from pysubs2 import SSAEvent, SSAFile
+from pysubs2.time import make_time
 from scenedetect.detectors import ContentDetector
 from scenedetect.frame_timecode import FrameTimecode
 from scenedetect.scene_manager import SceneManager
@@ -17,44 +17,64 @@ from autotrim.config import tmp_dir
 class GifExtractor:
 
     def __init__(self, padding_seconds=1.5):
-        self.padding_seconds = padding_seconds
+        self.padding_milliseconds = padding_seconds*1000
         self.output_format = '.mp4'
 
     def extract_gif(self, source, subtitles_list):
 
-        for subtitles in subtitles_list:
+        for subtitles_obj in subtitles_list:
 
             # gets an estimated start/end time from padding subtitles times
-            [start_time_padded, end_time_padded] = get_padded_trim_times(subtitles, self.padding_seconds)
+            [start_time_padded, end_time_padded] = self.get_padded_trim_times(subtitles_obj)
+
+            subtitles = subtitles_obj.subs
 
             # gets frame accurate start/end times for scene cuts
             [trim_start, trim_end] = find_trim_times(source, subtitles, start_time_padded, end_time_padded)
 
             output_filename = get_output_name(source, subtitles, self.output_format)
 
-            offset = datetime.timedelta(seconds=trim_start.get_seconds())
-            for sub in subtitles.subs:
+            offset = trim_start.get_seconds()*1000
+            for sub in subtitles:
                 sub.start -= offset
                 sub.end -= offset
 
-            ass_filename = convert_srt_to_ass(subtitles)
+            subtitles = add_effects(subtitles)
+            ass_filename = os.path.join(tmp_dir, os.urandom(24).hex() + '.ass')
+            subtitles.save(ass_filename)
             trim(source, ass_filename, output_filename, trim_start, trim_end)
             os.remove(ass_filename)
 
+    def get_padded_trim_times(self, subtitles):
 
-def convert_srt_to_ass(subtitles):
-    srt_filename = os.path.join(tmp_dir, os.urandom(24).hex() + '.srt')
-    ass_filename = os.path.join(tmp_dir, os.urandom(24).hex() + '.ass')
-    with open(srt_filename, 'w') as tmp_srt:
-        tmp_srt.write(srt.compose(subtitles.subs))
-    subprocess.run([
-        'ffmpeg',
-        '-i', srt_filename,
-        ass_filename,
-        '-y'
-    ], check=True)
-    os.remove(srt_filename)
-    return ass_filename
+        start_time_padded = subtitles.subs[0].start - self.padding_milliseconds
+        if subtitles.previous_end_time and start_time_padded < subtitles.previous_end_time:
+            start_time_padded = subtitles.previous_end_time
+
+        end_time_padded = subtitles.subs[-1].end + self.padding_milliseconds
+        if subtitles.next_start_time and end_time_padded > subtitles.next_start_time:
+            end_time_padded = subtitles.next_start_time
+
+        return [start_time_padded/1000, end_time_padded/1000]
+
+
+def add_effects(subtitles):
+    effected_subs = SSAFile()
+    for sub in subtitles:
+        content = sub.plaintext.strip().replace('\n', ' ')
+        syllable_sum = syllables.estimate(content)
+        subs_time = sub.end - sub.start
+        time_per_syllable = subs_time/syllable_sum
+        current_time = sub.start
+        current_index = 0
+        for i, word in enumerate(content.split(' ')):
+            sylls = syllables.estimate(word)
+            sub_end_time = current_time + time_per_syllable*sylls
+            current_index += len(word) if current_index is 0 else len(word) + 1
+            sentence = content[:current_index] + '{\\alpha&HFF}' + content[current_index:]
+            effected_subs.append(SSAEvent(start=current_time, end=sub_end_time, text=sentence))
+            current_time = sub_end_time
+    return effected_subs
 
 
 def trim(source, subs_filename, output, start, end):
@@ -72,20 +92,6 @@ def trim(source, subs_filename, output, start, end):
     ], check=True)
 
 
-def get_padded_trim_times(subtitles, padding_seconds):
-
-    padding = datetime.timedelta(seconds=padding_seconds)
-    start_time_padded = subtitles.subs[0].start - padding
-    if subtitles.previous_end_time and start_time_padded < subtitles.previous_end_time:
-        start_time_padded = subtitles.previous_end_time
-
-    end_time_padded = subtitles.subs[-1].end + padding
-    if subtitles.next_start_time and end_time_padded > subtitles.next_start_time:
-        end_time_padded = subtitles.next_start_time
-
-    return [start_time_padded, end_time_padded]
-
-
 def find_trim_times(source, subtitles, min_start_time, max_end_time):
 
     video_manager = VideoManager([source])
@@ -96,15 +102,15 @@ def find_trim_times(source, subtitles, min_start_time, max_end_time):
     try:
         # Set downscale factor to improve processing speed (no args means default).
         video_manager.set_downscale_factor()
-        x = FrameTimecode(timecode=str(min_start_time), fps=video_manager.get_framerate())
-        y = FrameTimecode(timecode=str(max_end_time), fps=video_manager.get_framerate())
+        x = FrameTimecode(timecode=min_start_time, fps=video_manager.get_framerate())
+        y = FrameTimecode(timecode=max_end_time, fps=video_manager.get_framerate())
         video_manager.set_duration(start_time=x, end_time=y)
         video_manager.start()
         scene_manager.detect_scenes(frame_source=video_manager)
         scene_list = scene_manager.get_scene_list(base_timecode)
 
-        subs_start = FrameTimecode(timecode=str(subtitles.subs[0].start), fps=video_manager.get_framerate())
-        subs_end = FrameTimecode(timecode=str(subtitles.subs[-1].end), fps=video_manager.get_framerate())
+        subs_start = FrameTimecode(timecode=str(subtitles[0].start), fps=video_manager.get_framerate())
+        subs_end = FrameTimecode(timecode=str(subtitles[-1].end), fps=video_manager.get_framerate())
 
         trim_start = x
         trim_end = y
@@ -127,7 +133,7 @@ def find_trim_times(source, subtitles, min_start_time, max_end_time):
 
 def get_output_name(source, subtitles, output_format):
     out_path = os.path.dirname(os.path.abspath(source))
-    no_new_lines = subtitles.subs[0].content.strip('\n').lower()[:30]
+    no_new_lines = subtitles[0].plaintext.strip('\n').lower()[:30]
     with_dashes = re.sub('[^0-9A-z]+', '-', no_new_lines).strip('-')
     unique_output = with_dashes + '-' + ''.join(os.urandom(4).hex()) + output_format
     return os.path.join(out_path, unique_output)

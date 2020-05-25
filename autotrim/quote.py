@@ -28,10 +28,10 @@ class SubtitleExtractor:
         ix = create_in(tmp_dir, self.schema)
 
         with ix.writer() as ix_writer:
-            for subtitle in subtitles:
+            for i, subtitle in enumerate(subtitles):
                 ix_writer.add_document(
-                    index=subtitle.index - 1,
-                    content=subtitle.content
+                    index=i,
+                    content=subtitle.text
                 )
 
         with ix.searcher() as ix_searcher:
