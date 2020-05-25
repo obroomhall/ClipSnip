@@ -1,4 +1,4 @@
-
+import logging
 import tempfile
 
 import srt
@@ -16,7 +16,11 @@ class SubtitleFinder:
     def __init__(self, skip_subsync, ost_username, ost_password, tmdb_key):
         self.skip_subsync = skip_subsync
         self.ost = OpenSubtitles()
-        self.ost.login(ost_username, ost_password)
+        try:
+            self.ost.login(ost_username, ost_password)
+        except Exception as e:
+            logging.error("Failed to log into opensubtitles.org.")
+            raise e
         self.ost_language = 'eng'
         if tmdb_key:
             self.media_searcher = MediaSearcher(tmdb_key)

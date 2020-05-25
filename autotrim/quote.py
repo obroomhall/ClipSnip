@@ -1,13 +1,10 @@
-import shutil
-import tempfile
-import time
-
-from whoosh import writing
-from whoosh.filedb.filestore import FileStorage
-from whoosh.index import create_in
-from whoosh.fields import *
-from whoosh.qparser import QueryParser
 from operator import itemgetter
+
+from whoosh.fields import *
+from whoosh.index import create_in
+from whoosh.qparser import QueryParser
+
+from autotrim.config import tmp_dir
 
 
 class ExtractedSubtitles:
@@ -21,33 +18,28 @@ class ExtractedSubtitles:
 
 class SubtitleExtractor:
 
-    def __init__(self, dir_name):
-        self.dir_name = dir_name
+    def __init__(self):
         self.schema = Schema(
             index=NUMERIC(stored=True),
             content=TEXT(stored=True))
 
     def search_subtitles(self, subtitles, search_str):
 
-        # with tempfile.TemporaryDirectory() as tmp_dir:
+        ix = create_in(tmp_dir, self.schema)
 
-        with FileStorage(self.dir_name) as storage:
+        with ix.writer() as ix_writer:
+            for subtitle in subtitles:
+                ix_writer.add_document(
+                    index=subtitle.index - 1,
+                    content=subtitle.content
+                )
 
-            ix = storage.create_index(self.schema)
+        with ix.searcher() as ix_searcher:
+            query = QueryParser('content', ix.schema).parse(search_str)
+            results = ix_searcher.search(query)
+            sorted_results = sorted(results, key=itemgetter('index'))
 
-            with ix.writer() as ix_writer:
-                for subtitle in subtitles:
-                    ix_writer.add_document(
-                        index=subtitle.index - 1,
-                        content=subtitle.content
-                    )
-
-            with ix.searcher() as ix_searcher:
-                query = QueryParser('content', ix.schema).parse(search_str)
-                results = ix_searcher.search(query)
-                sorted_results = sorted(results, key=itemgetter('index'))
-
-            ix.close()
+        ix.close()
 
         max_idx = len(subtitles) - 1
         extracted = []

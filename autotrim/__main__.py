@@ -1,8 +1,10 @@
 import argparse
 import os
+import shutil
 from pathlib import Path
 
 from autotrim import subtitle
+from autotrim.config import tmp_dir
 from autotrim.gif_extractor import GifExtractor
 from autotrim.quote import SubtitleExtractor
 from autotrim.subtitle import SubtitleFinder
@@ -17,27 +19,27 @@ def main():
 def run(video_filename, quote, best_match=False, padding_seconds=1.5, skip_subsync=False,
         subtitles_filename=None, imdb_id=None, ost_username=None, ost_password=None, tmdb_key=None):
 
-    tmp_dir = '.tmp/'
     Path(tmp_dir).mkdir(parents=True, exist_ok=True)
 
-    if subtitles_filename is None:
-        subtitle_finder = SubtitleFinder(skip_subsync, ost_username, ost_password, tmdb_key)
-        subtitles = subtitle_finder.find_and_download(video_filename, imdb_id)
-        if subtitles is None:
-            raise LookupError("Could not find subtitles for file.")
-    else:
-        subtitles = subtitle.read_subtitles(subtitles_filename)
+    try:
+        if subtitles_filename is None:
+            subtitle_finder = SubtitleFinder(skip_subsync, ost_username, ost_password, tmdb_key)
+            subtitles = subtitle_finder.find_and_download(video_filename, imdb_id)
+            if subtitles is None:
+                raise LookupError("Could not find subtitles for file.")
+        else:
+            subtitles = subtitle.read_subtitles(subtitles_filename)
 
-    subtitle_extractor = SubtitleExtractor(tmp_dir)
-    extracted_subs = subtitle_extractor.search_subtitles(subtitles, quote)
+        subtitle_extractor = SubtitleExtractor()
+        extracted_subs = subtitle_extractor.search_subtitles(subtitles, quote)
 
-    if best_match:
-        extracted_subs = [max(extracted_subs, key=lambda x:x.score)]
+        if best_match:
+            extracted_subs = [max(extracted_subs, key=lambda x:x.score)]
 
-    gif_extractor = GifExtractor(tmp_dir, padding_seconds)
-    gif_extractor.extract_gif(video_filename, extracted_subs)
-
-    # Path(tmp_dir).rmdir()
+        gif_extractor = GifExtractor(padding_seconds)
+        gif_extractor.extract_gif(video_filename, extracted_subs)
+    finally:
+        shutil.rmtree(tmp_dir)
 
 
 def get_parser():
