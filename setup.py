@@ -19,7 +19,7 @@ setuptools.setup(
         ],
     },
     install_requires=[
-        'srt',
+        'pysubs2',
         'python-opensubtitles',
         'whoosh',
         'tmdbsimple',
