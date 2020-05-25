@@ -70,7 +70,7 @@ def add_effects(subtitles):
         for i, word in enumerate(content.split(' ')):
             sylls = syllables.estimate(word)
             sub_end_time = current_time + time_per_syllable*sylls
-            current_index += len(word) if current_index is 0 else len(word) + 1
+            current_index += len(word) if current_index == 0 else len(word) + 1
             sentence = content[:current_index] + '{\\alpha&HFF}' + content[current_index:]
             effected_subs.append(SSAEvent(start=current_time, end=sub_end_time, text=sentence))
             current_time = sub_end_time
