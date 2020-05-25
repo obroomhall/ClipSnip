@@ -1,11 +1,9 @@
-import datetime
 import os
 import re
 import subprocess
-import pysubs2
+
 import syllables
 from pysubs2 import SSAEvent, SSAFile
-from pysubs2.time import make_time
 from scenedetect.detectors import ContentDetector
 from scenedetect.frame_timecode import FrameTimecode
 from scenedetect.scene_manager import SceneManager
@@ -30,18 +28,14 @@ class GifExtractor:
             subtitles = subtitles_obj.subs
 
             # gets frame accurate start/end times for scene cuts
-            [trim_start, trim_end] = find_trim_times(source, subtitles, start_time_padded, end_time_padded)
+            [trim_start, trim_end] = find_trim_times(source, subtitles, start_time_padded/1000, end_time_padded/1000)
 
-            output_filename = get_output_name(source, subtitles, self.output_format)
-
-            offset = trim_start.get_seconds()*1000
-            for sub in subtitles:
-                sub.start -= offset
-                sub.end -= offset
-
+            subtitles.shift(s=-trim_start.get_seconds())
             subtitles = add_effects(subtitles)
             ass_filename = os.path.join(tmp_dir, os.urandom(24).hex() + '.ass')
             subtitles.save(ass_filename)
+
+            output_filename = get_output_name(source, subtitles, self.output_format)
             trim(source, ass_filename, output_filename, trim_start, trim_end)
             os.remove(ass_filename)
 
@@ -55,24 +49,22 @@ class GifExtractor:
         if subtitles.next_start_time and end_time_padded > subtitles.next_start_time:
             end_time_padded = subtitles.next_start_time
 
-        return [start_time_padded/1000, end_time_padded/1000]
+        return [start_time_padded, end_time_padded]
 
 
 def add_effects(subtitles):
     effected_subs = SSAFile()
     for sub in subtitles:
         content = sub.plaintext.strip().replace('\n', ' ')
-        syllable_sum = syllables.estimate(content)
-        subs_time = sub.end - sub.start
-        time_per_syllable = subs_time/syllable_sum
+        time_per_syllable = (sub.end-sub.start)/syllables.estimate(content)
         current_time = sub.start
         current_index = 0
-        for i, word in enumerate(content.split(' ')):
+        for word in content.split(' '):
             sylls = syllables.estimate(word)
             sub_end_time = current_time + time_per_syllable*sylls
             current_index += len(word) if current_index == 0 else len(word) + 1
-            sentence = content[:current_index] + '{\\alpha&HFF}' + content[current_index:]
-            effected_subs.append(SSAEvent(start=current_time, end=sub_end_time, text=sentence))
+            text = content[:current_index] + '{\\alpha&HFF}' + content[current_index:]  # adds transparency
+            effected_subs.append(SSAEvent(start=current_time, end=sub_end_time, text=text))
             current_time = sub_end_time
     return effected_subs
 

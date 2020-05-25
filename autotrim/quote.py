@@ -1,5 +1,6 @@
 from operator import itemgetter
 
+from pysubs2 import SSAFile
 from whoosh.fields import *
 from whoosh.index import create_in
 from whoosh.qparser import QueryParser
@@ -47,7 +48,7 @@ class SubtitleExtractor:
         while i < len(sorted_results):
 
             score = 0
-            subs = []
+            subs = SSAFile()
             while i+len(subs) < len(sorted_results) \
                     and sorted_results[i+len(subs)]['index'] == sorted_results[i]['index']+len(subs):
                 score = max(score, sorted_results[i+len(subs)].score)

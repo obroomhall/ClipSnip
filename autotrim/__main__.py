@@ -5,7 +5,6 @@ from pathlib import Path
 
 import pysubs2
 
-from autotrim import subtitle
 from autotrim.config import tmp_dir
 from autotrim.gif_extractor import GifExtractor
 from autotrim.quote import SubtitleExtractor

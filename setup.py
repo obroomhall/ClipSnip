@@ -37,7 +37,6 @@ setuptools.setup(
         'Intended Audience :: Developers',
         'Intended Audience :: End Users/Desktop',
         'Topic :: Multimedia :: Video',
-        'Topic :: Software Development :: Build Tools',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',

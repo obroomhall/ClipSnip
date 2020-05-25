@@ -1,7 +1,8 @@
+import os
+import unittest
+
 import tests.candidates as candidates
 from autotrim.media_searcher import MediaSearcher
-import unittest
-import os
 
 
 class MediaSearcherTest(unittest.TestCase):

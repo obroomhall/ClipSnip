@@ -1,6 +1,7 @@
+import unittest
+
 import autotrim.filename_parser as parser
 import tests.candidates as candidates
-import unittest
 
 
 class FilenameParserTest(unittest.TestCase):
