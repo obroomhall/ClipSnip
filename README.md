@@ -1,7 +1,4 @@
-<img align="right" src="https://img.shields.io/pypi/status/autotrim.svg" href="https://pypi.org/pypi/autotrim/"/>
-<img align="right" src="https://img.shields.io/pypi/pyversions/autotrim.svg" href="https://pypi.org/pypi/autotrim/"/>
-<img align="right" src="https://img.shields.io/pypi/v/autotrim.svg" href="https://pypi.org/pypi/autotrim/"/>
-<h1>AutoTrim</h1>
+<img align="right" src="https://img.shields.io/pypi/status/autotrim.svg" href="https://pypi.org/pypi/autotrim/"/><img align="right" src="https://img.shields.io/pypi/pyversions/autotrim.svg" href="https://pypi.org/pypi/autotrim/"/><img align="right" src="https://img.shields.io/pypi/v/autotrim.svg" href="https://pypi.org/pypi/autotrim/"/><h1>AutoTrim</h1>
 
 ## Overview
 AutoTrim is a command line tool that can take just 2 arguments; a path to a video file, and a quote to search for, and aims to return a set of short, relevant clips from that file, like this:
