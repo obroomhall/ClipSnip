@@ -19,7 +19,7 @@ season_episode_pattern = re.compile('[. ][Ss](?P<season>\\d{1,2})[Ee](?P<episode
 
 
 def parse(filename):
-    filename = filename.split('/')[-1]
+    filename = filename.split('/')[-1].split('\\')[-1].rsplit('.', 1)[0]
     year_matches = [(i.start(), i.group('year')) for i in year_pattern.finditer(filename)]
     if year_matches:
         year_match = year_matches[-1]

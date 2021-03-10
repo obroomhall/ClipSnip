@@ -2,7 +2,7 @@ import logging
 import tempfile
 
 import pysubs2
-from ffsubsync import subsync
+from ffsubsync import ffsubsync
 from pythonopensubtitles.opensubtitles import OpenSubtitles
 from pythonopensubtitles.utils import File
 
@@ -25,7 +25,7 @@ class SubtitleFinder:
         if tmdb_key:
             self.media_searcher = MediaSearcher(tmdb_key)
         if not self.skip_subsync:
-            self.subsync_parser = subsync.make_parser()
+            self.subsync_parser = ffsubsync.make_parser()
 
     def find_and_download(self, source, imdb_id):
 
@@ -89,7 +89,7 @@ class SubtitleFinder:
                 return pysubs2.load(tmp_synced.name)
 
     def run_subsync(self, reference, srtin, srtout):
-        subsync.run(self.subsync_parser.parse_args([
+        ffsubsync.run(self.subsync_parser.parse_args([
             reference,
             '-i', srtin,
             '-o', srtout

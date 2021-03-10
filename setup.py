@@ -23,13 +23,14 @@ setuptools.setup(
         'python-opensubtitles',
         'whoosh',
         'tmdbsimple',
-        'scenedetect[progress_bar]',
+        'scenedetect[opencv-headless]',
         'ffsubsync',
         'wheel',
+        'syllables'
     ],
-    extras_require={
-        'opencv': ['opencv-python'],
-    },
+    # extras_require={
+    #     'opencv': ['opencv-python-headless'],
+    # },
     python_requires='>=3.5, <4',
     license='MIT',
     classifiers=[
