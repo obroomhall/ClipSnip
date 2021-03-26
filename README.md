@@ -17,8 +17,10 @@ Parameters:
 
 Output:
 
-![Community](https://media.giphy.com/media/TFaDvUr4O9pR9jKz4q/giphy.gif) ![Community2](https://media.giphy.com/media/SwTwbjka5sLMpxsuAt/giphy.gif)
-
+<p align="center">
+  <img src="https://media.giphy.com/media/TFaDvUr4O9pR9jKz4q/giphy.gif" width="400" />
+  <img src="https://media.giphy.com/media/SwTwbjka5sLMpxsuAt/giphy.gif" width="400" />
+</p>
 
 ## Key Features
 
