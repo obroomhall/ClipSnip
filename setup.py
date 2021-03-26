@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='clipsnip',
-    version='0.0.1',
+    version='0.0.20',
     packages=setuptools.find_packages(),
     url='https://github.com/obroomhall/clipsnip',
     author='Oliver Broomhall',
