@@ -17,8 +17,7 @@ Parameters:
 
 Output:
 
-![Community](https://media.giphy.com/media/TFaDvUr4O9pR9jKz4q/giphy.gif)
-![Community2](https://media.giphy.com/media/SwTwbjka5sLMpxsuAt/giphy.gif)
+![Community](https://media.giphy.com/media/TFaDvUr4O9pR9jKz4q/giphy.gif) ![Community2](https://media.giphy.com/media/SwTwbjka5sLMpxsuAt/giphy.gif)
 
 
 ## Key Features
