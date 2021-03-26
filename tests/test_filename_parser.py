@@ -1,6 +1,6 @@
 import unittest
 
-import autotrim.filename_parser as parser
+import clipsnip.filename_parser as parser
 import tests.candidates as candidates
 
 

@@ -1,6 +1,6 @@
 import tmdbsimple as tmdb
 
-from autotrim.filename_parser import ParsedMovie, ParsedSeries
+from clipsnip.filename_parser import ParsedMovie, ParsedSeries
 
 
 class MediaSearcher:

@@ -6,9 +6,9 @@ from ffsubsync import ffsubsync
 from pythonopensubtitles.opensubtitles import OpenSubtitles
 from pythonopensubtitles.utils import File
 
-from autotrim import filename_parser
-from autotrim.filename_parser import ParsedMovie, ParsedSeries
-from autotrim.media_searcher import MediaSearcher
+from clipsnip import filename_parser
+from clipsnip.filename_parser import ParsedMovie, ParsedSeries
+from clipsnip.media_searcher import MediaSearcher
 
 
 class SubtitleFinder:

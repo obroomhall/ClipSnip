@@ -5,10 +5,10 @@ from pathlib import Path
 
 import pysubs2
 
-from autotrim.config import tmp_dir
-from autotrim.gif_extractor import GifExtractor
-from autotrim.quote import SubtitleExtractor
-from autotrim.subtitle import SubtitleFinder
+from clipsnip.config import tmp_dir
+from clipsnip.gif_extractor import GifExtractor
+from clipsnip.quote import SubtitleExtractor
+from clipsnip.subtitle import SubtitleFinder
 
 
 def main():
@@ -45,7 +45,7 @@ def run(video_filename, quote, best_match=False, padding_seconds=1.5, skip_subsy
 
 def get_parser():
     parser = argparse.ArgumentParser()
-    parser.description = 'AutoTrim extracts relevant clips from a video based on your provided quote. Example usage: ' \
+    parser.description = 'ClipSnip extracts relevant clips from a video based on your provided quote. Example usage: ' \
                          '{0} -v Forest.Gump.1994.1080p.mkv -q \'box of chocolates\''.format(parser.prog)
     parser.add_argument(
         '-v', '--video-filename',

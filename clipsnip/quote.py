@@ -5,7 +5,7 @@ from whoosh.fields import *
 from whoosh.index import create_in
 from whoosh.qparser import QueryParser
 
-from autotrim.config import tmp_dir
+from clipsnip.config import tmp_dir
 
 
 class ExtractedSubtitles:

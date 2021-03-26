@@ -4,10 +4,10 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='autotrim',
-    version='0.0.13',
+    name='clipsnip',
+    version='0.0.1',
     packages=setuptools.find_packages(),
-    url='https://github.com/obroomhall/autotrim',
+    url='https://github.com/obroomhall/clipsnip',
     author='Oliver Broomhall',
     author_email='obroomhall@gmail.com',
     description='Automated extraction of short clips from media files, using quotes.',
@@ -15,7 +15,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     entry_points={
         'console_scripts': [
-            'autotrim = autotrim.__main__:main'
+            'snip = clipsnip.__main__:main'
         ],
     },
     install_requires=[

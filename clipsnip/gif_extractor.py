@@ -9,7 +9,7 @@ from scenedetect.frame_timecode import FrameTimecode
 from scenedetect.scene_manager import SceneManager
 from scenedetect.video_manager import VideoManager
 
-from autotrim.config import tmp_dir
+from clipsnip.config import tmp_dir
 
 
 class GifExtractor:

@@ -2,7 +2,7 @@ import os
 import unittest
 
 import tests.candidates as candidates
-from autotrim.media_searcher import MediaSearcher
+from clipsnip.media_searcher import MediaSearcher
 
 
 class MediaSearcherTest(unittest.TestCase):

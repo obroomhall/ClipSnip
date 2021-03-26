@@ -11,7 +11,7 @@ snip -q "nicest" -v "Community.S01E01.1080p.BluRay.x264.mkv"
 ```
 Parameters:
 * The quote to search for (`-q`)
-* The video file to trim (`-v`)
+* The video file to snip (`-v`)
 
 output-1 | output-2
 :---:|:---:
