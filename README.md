@@ -6,16 +6,19 @@ ClipSnip is a command line tool that that automates the creation of GIFs from me
 ## Usage
 
 Simple usage:
+
 ```
 snip -q "nicest" -v "Community.S01E01.1080p.BluRay.x264.mkv"
 ```
+
 Parameters:
 * The quote to search for (`-q`)
 * The video file to snip (`-v`)
 
-output-1 | output-2
-:---:|:---:
-![Community](https://media.giphy.com/media/TFaDvUr4O9pR9jKz4q/giphy.gif) | ![Community2](https://media.giphy.com/media/SwTwbjka5sLMpxsuAt/giphy.gif)
+Output:
+
+![Community](https://media.giphy.com/media/TFaDvUr4O9pR9jKz4q/giphy.gif)
+![Community2](https://media.giphy.com/media/SwTwbjka5sLMpxsuAt/giphy.gif)
 
 
 ## Key Features
@@ -27,20 +30,10 @@ output-1 | output-2
 
 ## Installation
 
-1. Ensure you have [ffmpeg](https://ffmpeg.org/) installed
-    ```
-    sudo apt-get install ffmpeg
-    ```
-
-2. Install ClipSnip with OpenCV
-    ```
-    pip install clipsnip[opencv]
-    ```
-   
-    Otherwise, if you already have OpenCV
-    ```
-    pip install clipsnip
-    ```
+```
+sudo apt-get install ffmpeg
+pip install clipsnip
+```
 
 
 ## Credits
