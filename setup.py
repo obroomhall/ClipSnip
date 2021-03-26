@@ -28,9 +28,6 @@ setuptools.setup(
         'wheel',
         'syllables'
     ],
-    # extras_require={
-    #     'opencv': ['opencv-python-headless'],
-    # },
     python_requires='>=3.5, <4',
     license='MIT',
     classifiers=[
